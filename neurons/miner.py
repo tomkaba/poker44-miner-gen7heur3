@@ -21,7 +21,7 @@ from poker44.miner_heuristics import (
     score_chunk_modern,
     score_chunk_modern_with_route,
     score_chunk_legacy,
-    score_chunks_gen7heur2,
+    score_chunk_gen7heur3,
     get_chunk_scorer_startup_check,
     chunk_payload_is_legacy,
     _load_ml_model_filtered0,
@@ -54,10 +54,10 @@ class Miner(BaseMinerNeuron):
         ml_max_hands = int(os.getenv("ML_MAX_HANDS", "40"))
         remove_other_flag = os.getenv("REMOVE_OTHER", "0").strip().lower()
         remove_other_enabled = remove_other_flag in ("1", "true", "yes")
-        chunk_scorer = "gen7heur2"  # hardcoded for gen7heur2 release
+        chunk_scorer = "gen7heur3"  # hardcoded for gen7heur3 release
         bt.logging.info(f"[init] ML_MAX_HANDS={ml_max_hands}")
         bt.logging.info(f"[init] REMOVE_OTHER={remove_other_enabled} (raw={remove_other_flag})")
-        bt.logging.info("[init] POKER44_CHUNK_SCORER=gen7heur2 (hardcoded for gen7heur2 release)")
+        bt.logging.info("[init] POKER44_CHUNK_SCORER=gen7heur3 (hardcoded for gen7heur3 release)")
         bt.logging.info(
             "[init] Chunk scorer override active: ML_MAX_HANDS routing thresholds are ignored "
             "for per-chunk scoring path."
@@ -96,13 +96,13 @@ class Miner(BaseMinerNeuron):
             repo_root=repo_root,
             implementation_files=[Path(__file__).resolve()],
             defaults={
-                "model_name": "poker44_gen7heur2",
-                "model_version": "7.2",
-                "framework": "python-heuristic-rebalanced",
+                "model_name": "poker44_gen7heur3",
+                "model_version": "7.3",
+                "framework": "python-heuristic",
                 "license": "MIT",
-                "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur2",
+                "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur3",
                 "repo_commit": _git_commit,
-                "notes": "Gen7heur1 with near-threshold per-batch 50/50 rebalance.",
+                "notes": "Gen7 heuristic trained on latest benchmark snapshots.",
                 "open_source": True,
                 "inference_mode": "remote",
                 "training_data_statement": (
@@ -308,22 +308,18 @@ class Miner(BaseMinerNeuron):
         scores = []
         chunk_routes = []
 
-        # gen7heur2 scorer bypasses per-hand ML models entirely
-        chunk_scorer = "gen7heur2"  # hardcoded for gen7heur2 release
+        # gen7heur3 scorer bypasses per-hand ML models entirely
+        chunk_scorer = "gen7heur3"  # hardcoded for gen7heur3 release
 
-        if chunk_scorer == "gen7heur2":
-            scores, chunk_routes, rebalance_stats = score_chunks_gen7heur2(chunks)
-            bt.logging.info(
-                "[miner] gen7heur2 rebalance | "
-                f"chunks={rebalance_stats['n_chunks']} "
-                f"initial_bots={rebalance_stats['initial_bots']} "
-                f"initial_humans={rebalance_stats['initial_humans']} "
-                f"target_bots={rebalance_stats['target_bots']} "
-                f"flips={rebalance_stats['flips']} "
-                f"final_bots={rebalance_stats['final_bots']} "
-                f"final_humans={rebalance_stats['final_humans']}"
-            )
-            for index, (chunk, mode, route, score) in enumerate(zip(chunks, chunk_modes, chunk_routes, scores)):
+        if chunk_scorer == "gen7heur3":
+            for index, (chunk, mode) in enumerate(zip(chunks, chunk_modes)):
+                if mode == "legacy":
+                    score = score_chunk_legacy(chunk)
+                    route = "legacy_payload_heuristics"
+                else:
+                    score, route = score_chunk_gen7heur3(chunk)
+                scores.append(score)
+                chunk_routes.append(route)
                 bt.logging.debug(
                     f"[miner] chunk[{index}] size={len(chunk or [])} "
                     f"mode={mode} route={route} score={float(score):.6f}"
