@@ -4,7 +4,7 @@ if [[ $# -lt 1 || -z "${1:-}" ]]; then
   echo "Użycie: $0 ID1,ID2,ID3... [ML_MAX_HANDS] [REMOVE_OTHER] [MODEL]"
   echo "ML_MAX_HANDS (opcjonalnie): maks. liczba rąk dla routingu single-hand ML vote (domyślnie 40)"
   echo "REMOVE_OTHER (opcjonalnie): jeśli ustawione na 1/true, usuwa 'other' akcje z rąk (domyślnie 0)"
-  echo "MODEL (opcjonalnie): gen7heur3"
+  echo "MODEL (opcjonalnie): gen7heur5"
   exit 1
 fi
 
@@ -15,24 +15,24 @@ REMOVE_OTHER="${3:-0}"
 MODEL="${4:-}"
 ENV_FILE="${ENV_FILE:-$REPO/.env}"
 
-SINGLE_HAND_MODEL_ALIAS="gen7heur3"
+SINGLE_HAND_MODEL_ALIAS="gen7heur5"
 SINGLE_HAND_MODEL_PATH="weights/ml_single_hand_model.pkl"
 SINGLE_HAND_SCALER_PATH="weights/ml_single_hand_scaler.pkl"
-CHUNK_SCORER="gen7heur3"
+CHUNK_SCORER="gen7heur5"
 
 # Public manifest pinning (release repo snapshot used for transparency checks).
-MANIFEST_REPO_URL="${POKER44_MODEL_REPO_URL:-https://github.com/tomkaba/poker44-miner-gen7heur3}"
+MANIFEST_REPO_URL="${POKER44_MODEL_REPO_URL:-https://github.com/tomkaba/poker44-miner-gen7heur5}"
 MANIFEST_REPO_COMMIT="${POKER44_MODEL_REPO_COMMIT:-$(git -C "$REPO" rev-parse --short HEAD 2>/dev/null || true)}"
 MANIFEST_IMPL_FILES="${POKER44_MODEL_IMPLEMENTATION_FILES:-neurons/miner.py,poker44/miner_heuristics.py}"
-MANIFEST_IMPL_SHA256="${POKER44_MODEL_IMPLEMENTATION_SHA256:-ae8c5b0b96767e3c375ca9c23e4d20675ab595ff91425c3791b99c7442542d6d}"
+MANIFEST_IMPL_SHA256="${POKER44_MODEL_IMPLEMENTATION_SHA256:-0c5c6d4130ece8d455d0b9c0f72acafa2c9f5849900e46e3d3681be5aaaaace7}"
 
 case "$MODEL" in
   "" )
     ;;
-  "gen7heur3" )
+  "gen7heur5" )
     ;;
   * )
-    echo "ERROR: Niepoprawny MODEL='$MODEL'. Dozwolone: gen7heur3"
+    echo "ERROR: Niepoprawny MODEL='$MODEL'. Dozwolone: gen7heur5"
     exit 1
     ;;
 esac

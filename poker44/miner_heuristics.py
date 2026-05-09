@@ -1695,12 +1695,12 @@ def score_chunk_gen7heur1(chunk: List[dict]) -> Tuple[float, str]:
     return round(max(0.0, min(1.0, score)), 6), "gen7heur1"
 
 
-def score_chunk_gen7heur3(chunk: List[dict]) -> Tuple[float, str]:
-    """Score a chunk with the gen7heur3 profile (same math as gen7heur1)."""
+def score_chunk_gen7heur5(chunk: List[dict]) -> Tuple[float, str]:
+    """Score a chunk with the gen7heur5 profile (same math as gen7heur1)."""
     score, route = score_chunk_gen7heur1(chunk)
     if route == "gen7heur1":
-        return score, "gen7heur3"
-    return score, route.replace("gen7heur1", "gen7heur3")
+        return score, "gen7heur5"
+    return score, route.replace("gen7heur1", "gen7heur5")
 
 
 def score_chunks_gen7heur2(chunks: List[List[dict]]) -> Tuple[List[float], List[str], Dict[str, int]]:
@@ -1774,13 +1774,13 @@ def get_chunk_scorer_startup_check(scorer: str) -> Dict[str, object]:
     scorer_norm = (scorer or "").strip().lower()
     info: Dict[str, object] = {
         "scorer": scorer_norm,
-        "active": scorer_norm in {"gen7heur3"},
+        "active": scorer_norm in {"gen7heur5"},
         "ok": True,
         "error": None,
         "details": {},
     }
 
-    if scorer_norm in {"gen7heur3"}:
+    if scorer_norm in {"gen7heur5"}:
         env_path = os.getenv("POKER44_GEN7HEUR1_PROFILE", "")
         profile_path = (
             Path(env_path)

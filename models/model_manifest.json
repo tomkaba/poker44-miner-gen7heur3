@@ -1,11 +1,11 @@
 {
   "schema_version": "1",
   "open_source": true,
-  "model_name": "poker44_gen7heur3",
-  "model_version": "7.3",
+  "model_name": "poker44_gen7heur5",
+  "model_version": "7.5",
   "framework": "python-heuristic",
   "license": "MIT",
-  "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur3",
+  "repo_url": "https://github.com/tomkaba/poker44-miner-gen7heur5",
   "repo_commit": "b74a9c7",
   "inference_mode": "remote",
   "training_data_statement": "Trained on public benchmark snapshots; no validator-private data used.",
@@ -14,5 +14,5 @@
     "neurons/miner.py",
     "poker44/miner_heuristics.py"
   ],
-  "implementation_sha256": "ae8c5b0b96767e3c375ca9c23e4d20675ab595ff91425c3791b99c7442542d6d"
+  "implementation_sha256": "0c5c6d4130ece8d455d0b9c0f72acafa2c9f5849900e46e3d3681be5aaaaace7"
 }
